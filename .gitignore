@@ -4,3 +4,6 @@
 # ignore real but not test inputs
 *.txt
 !*_test.txt
+
+# ignore python venv
+.venv
