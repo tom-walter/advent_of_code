@@ -1,6 +1,10 @@
 # ignore Rust compiled files
 *.pdb
 *.exe
+
+# ignore env parameters
+.env
+
 # ignore real but not test inputs
 *.txt
 !*_test.txt
