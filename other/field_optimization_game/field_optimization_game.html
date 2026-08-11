@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Field Optimization Game</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f4f4;padding:20px}
+.controls,.metrics{margin-bottom:16px}
+#grid{display:grid;gap:2px;width:max-content}
+.cell{width:32px;height:32px;border:1px solid #999;cursor:pointer}
+.water{background:#3498db}
+.productive{background:#2ecc71}
+.unproductive{background:#f1c40f}
+</style>
+</head>
+<body>
+<h2>Field Optimization Game</h2>
+<div class="controls">
+<label>Grid Size N: <input id="size" type="number" min="3" max="30" value="9"></label>
+<button onclick="createGrid()">New Grid</button>
+</div>
+<div class="metrics">
+<div id="waterMetric"></div>
+<div id="unprodMetric"></div>
+<div id="prodMetric"></div>
+</div>
+<div id="grid"></div>
+<script>
+let N=9; let grid=[];
+function createGrid(){
+ N=parseInt(document.getElementById('size').value);
+ grid=Array.from({length:N},()=>Array(N).fill('F'));
+ render();
+}
+function isProductive(r,c){
+ if(grid[r][c]==='W') return false;
+ const dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+ return dirs.some(([dr,dc])=>{const nr=r+dr,nc=c+dc;return nr>=0&&nr<N&&nc>=0&&nc<N&&grid[nr][nc]==='W';});
+}
+function render(){
+ const g=document.getElementById('grid');
+ g.style.gridTemplateColumns=`repeat(${N},32px)`;
+ g.innerHTML='';
+ let water=0,prod=0,unprod=0;
+ for(let r=0;r<N;r++){
+  for(let c=0;c<N;c++){
+   const d=document.createElement('div');
+   d.className='cell';
+   if(grid[r][c]==='W'){d.classList.add('water');water++;}
+   else if(isProductive(r,c)){d.classList.add('productive');prod++;}
+   else {d.classList.add('unproductive');unprod++;}
+   d.onclick=()=>{grid[r][c]=grid[r][c]==='W'?'F':'W';render();};
+   g.appendChild(d);
+  }
+ }
+ const total=N*N;
+ document.getElementById('waterMetric').textContent=`Water: ${water}/${total} (${(100*water/total).toFixed(1)}%)`;
+ document.getElementById('unprodMetric').textContent=`Unproductive Fields: ${unprod}/${total} (${(100*unprod/total).toFixed(1)}%)`;
+ document.getElementById('prodMetric').textContent=`Productive Fields: ${prod}/${total} (${(100*prod/total).toFixed(1)}%)`;
+}
+createGrid();
+</script>
+</body>
+</html>
